@@ -34,7 +34,13 @@ public:
     void createRBoard(int seed = 0);
     void seedRBoard(int seed = 0);
     void numberBoard();
+
+
     void solve();
+    void solveGraphically();
+    bool checkSolution(std::vector<std::vector<u_short>>);
+    std::vector<std::vector<u_short>> generateBoardState();
+
 
     void draw();
     void print();
@@ -45,6 +51,7 @@ public:
 
     void cleanBoardVisuals();
     void resetBoardState();
+    void cleanBoardFlags();
 
     void groupShow(u_int x, u_int y);
     void activateTile(u_int x, u_int y);

@@ -6,7 +6,7 @@ int main()
     const static int windowSizeHeight = 720;
     const static int windowSizeLength = 720;
     sf::RenderWindow window(sf::VideoMode(windowSizeLength, windowSizeHeight), "SFML window");
-    minesweeper aGame(&window, 10, 10);
+    minesweeper aGame(&window, 10, 25);
     aGame.createRBoard();
     aGame.printAnswer();
     window.setFramerateLimit(60);

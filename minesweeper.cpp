@@ -4,15 +4,6 @@
 #include <cstring>
 #include <SFML/Graphics.hpp>
 
-// TODO
-/* Add safe loop using custom iterators
- * Add feeding to video
- *
- *
- *
- *
- *
- * */
 
 bool safetyCheck(long value, long min, long max)
 {
@@ -138,7 +129,7 @@ void minesweeper::activateTile(u_int x, u_int y)
             return;
     }
     u_int value = boardState[x][y];
-    u_int xCoord, yCoord;
+    u_int xCoord, yCoord; // refer to graphics coords on the sprite sheet
     switch(value)
     {
     case 0:
@@ -323,8 +314,14 @@ void minesweeper::resetBoardState()
     this->boardState = std::vector<std::vector<u_int>>(size, std::vector<u_int>(size, 0));
     this->boardVisible = std::vector<std::vector<bool>>(size, std::vector<bool>(size, false));
     this->cleanBoardVisuals();
+    this->cleanBoardFlags();
 }
 
+
+void minesweeper::cleanBoardFlags()
+{
+    this->flags = std::vector<coordPair>{};
+}
 void minesweeper::flag(u_int x, u_int y)
 {
     if(!safetyCheck(x, 0, size))
@@ -354,4 +351,30 @@ void minesweeper::flag(u_int x, u_int y)
     spriteVector[x][y].setTextureRect(sf::IntRect(xCoord, yCoord, xCoord+10,yCoord+10));
 }
 
+void minesweeper::solve()
+{
 
+}
+void minesweeper::solveGraphically()
+{
+
+}/*
+bool minesweeper::checkSolution(std::vector<std::vector<int>>)
+{
+
+}
+std::vector<std::vector<u_short>> minesweeper::generateBoardState()
+{
+    std::vector<std::vector<u_short>> retArr = this->boardState;
+    for (int x = 0; x < this->boardState.length(); x++)
+    {
+        for (int y = 0; y < this->boardState[x].length(); y++)
+        {
+            if (!boardVisible[x][y])
+            {
+                retArr[x][y] = 10;
+            }
+        }
+    }
+}
+*/

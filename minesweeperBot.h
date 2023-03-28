@@ -1,0 +1,6 @@
+#ifndef MINESWEEPERBOT_H
+#define MINESWEEPERBOT_H
+
+
+
+#endif // MINESWEEPERBOT_H
