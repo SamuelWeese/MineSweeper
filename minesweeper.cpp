@@ -4,7 +4,11 @@
 #include <cstring>
 #include <SFML/Graphics.hpp>
 
-
+#define pixelWidth 16
+#define cleanTile 1*pixelWidth,0*pixelWidth,2*pixelWidth,1*pixelWidth
+#define emptyTile 2*pixelWidth,0*pixelWidth,1*pixelWidth,1*pixelWidth
+#define flagTile 1*pixelWidth, 1*pixelWidth, 2*pixelWidth,2*pixelWidth
+#define badFlag 1*pixelWidth, 2*pixelWidth, 2*pixelWidth,3*pixelWidth
 bool safetyCheck(long value, long min, long max)
 {
     if (value >= max) return false;
@@ -29,14 +33,15 @@ minesweeper::minesweeper(sf::RenderWindow *aWindow, u_int size, u_int bombs)
 
     this->window = aWindow;
 
-    if (!spriteSheet.loadFromFile("/tmp/sprite_sheet.png"))
+    if (!spriteSheet.loadFromFile("/tmp/sprite_sheet2.png"))
     {
         throw std::runtime_error("Bad tile sprite texture path.");
     }
+    // REDO to show multiple solving at same time
     auto windowDimension = window->getSize();
     float scaleX, scaleY; // windowSize - padding * 2 is to ensure tile only in the "play space"
-    scaleX = (float)windowDimension.x/(float)(10*size) - padding*2;
-    scaleY = (float)windowDimension.y/(float)(10*size) - padding*2;
+    scaleX = (float)windowDimension.x/(float)(pixelWidth*size) - padding*2;
+    scaleY = (float)windowDimension.y/(float)(pixelWidth*size) - padding*2;
     int positionX, positionY;
     for (u_int x_iter = 0; x_iter < size; x_iter++)
     {
@@ -50,7 +55,7 @@ minesweeper::minesweeper(sf::RenderWindow *aWindow, u_int size, u_int bombs)
             spriteVector[x_iter][y_iter].setPosition(positionX, positionY);
             spriteVector[x_iter][y_iter].scale(scaleX, scaleY);
             spriteVector[x_iter][y_iter].setTexture(this->spriteSheet);
-            spriteVector[x_iter][y_iter].setTextureRect(sf::IntRect(20,0,30,10));
+            spriteVector[x_iter][y_iter].setTextureRect(sf::IntRect(cleanTile));
 
         }
     }
@@ -116,6 +121,7 @@ void minesweeper::numberBoard()
 
 void minesweeper::activateTile(u_int x, u_int y)
 {
+    if(!playing) return;
     if(!safetyCheck(x, 0, size))
         return;
     if(!safetyCheck(y, 0, size))
@@ -134,52 +140,52 @@ void minesweeper::activateTile(u_int x, u_int y)
     {
     case 0:
         groupShow(x,y);
-        xCoord = 10;
-        yCoord = 50;
-        spriteVector[x][y].setTextureRect(sf::IntRect(xCoord, yCoord, xCoord+9,yCoord+9));
+        xCoord = 1 * pixelWidth;
+        yCoord = 5 * pixelWidth;
+        spriteVector[x][y].setTextureRect(sf::IntRect(emptyTile));
         return;
     case bomb:
         boardVisible[x][y] = true;
         this->endGame(false);
-        xCoord = 10;
-        yCoord = 20;
+        xCoord = 1 * pixelWidth;
+        yCoord = 4 * pixelWidth;
         break;
     case 1:
-        xCoord = 00;
-        yCoord = 00;
+        xCoord = 0 * pixelWidth;
+        yCoord = 0 * pixelWidth;
         break;
     case 2:
-        xCoord = 0;
-        yCoord = 10;
+        xCoord = 0 * pixelWidth;
+        yCoord = 1 * pixelWidth;
         break;
     case 3:
-        xCoord = 00;
-        yCoord = 20;
+        xCoord = 0 * pixelWidth;
+        yCoord = 2 * pixelWidth;
         break;
     case 4:
-        xCoord = 0;
-        yCoord = 30;
+        xCoord = 0 * pixelWidth;
+        yCoord = 3 * pixelWidth;
         break;
     case 5:
-        xCoord = 0;
-        yCoord = 40;
+        xCoord = 0 * pixelWidth;
+        yCoord = 4 * pixelWidth;
         break;
     case 6:
-        xCoord = 0;
-        yCoord = 50;
+        xCoord = 0 * pixelWidth;
+        yCoord = 5 * pixelWidth;
         break;
     case 7:
         xCoord = 0;
-        yCoord = 60;
+        yCoord = 6 * pixelWidth;
         break;
     case 8:
         xCoord = 0;
-        yCoord = 70;
+        yCoord = 7 * pixelWidth;
         break;
     default:
         boardVisible[x][y] = true;
     }
-    spriteVector[x][y].setTextureRect(sf::IntRect(xCoord, yCoord, xCoord+10,yCoord+10));
+    spriteVector[x][y].setTextureRect(sf::IntRect(xCoord, yCoord, xCoord+1 * pixelWidth, yCoord+1 * pixelWidth));
     boardVisible[x][y] = true;
 }
 
@@ -304,13 +310,14 @@ void minesweeper::cleanBoardVisuals()
     {
         for (u_int y_iter = 0; y_iter < size; y_iter++)
         {
-            spriteVector[x_iter][y_iter].setTextureRect(sf::IntRect(20,0,30,10));
+            spriteVector[x_iter][y_iter].setTextureRect(sf::IntRect(cleanTile));
         }
     }
 }
 
 void minesweeper::resetBoardState()
 {
+    this->playing = true;
     this->boardState = std::vector<std::vector<u_int>>(size, std::vector<u_int>(size, 0));
     this->boardVisible = std::vector<std::vector<bool>>(size, std::vector<bool>(size, false));
     this->cleanBoardVisuals();
@@ -339,18 +346,17 @@ void minesweeper::flag(u_int x, u_int y)
     {
         if (pair_iter.x == x && pair_iter.y == y)
         {
-            this->spriteVector[x][y].setTextureRect(sf::IntRect(20,0,30,10));
+            this->spriteVector[x][y].setTextureRect(sf::IntRect(cleanTile));
             this->flags.erase(flags.begin()+aPair);
             return;
         }
         aPair++;
     }
     this->flags.push_back(Pair);
-    u_short xCoord = 10;
-    u_short yCoord = 40;
-    spriteVector[x][y].setTextureRect(sf::IntRect(xCoord, yCoord, xCoord+10,yCoord+10));
+    spriteVector[x][y].setTextureRect(sf::IntRect(flagTile));
 }
-
+// TODO with professor interview live
+// implement his solution, not any old one
 void minesweeper::solve()
 {
 
@@ -358,7 +364,33 @@ void minesweeper::solve()
 void minesweeper::solveGraphically()
 {
 
-}/*
+}
+void minesweeper::playEndAnimation()
+{
+    for (u_long iter_I = 0; iter_I < this->boardState.size(); iter_I++)
+    {
+        for (u_long iter_J = 0; iter_J < this->boardState[iter_I].size(); iter_J++)
+        {
+            for (auto pair_iter : this->flags)
+            {
+
+            }
+        }
+    }
+    for (auto pair_iter : this->flags)
+    {
+        if (boardState[pair_iter.x][pair_iter.y] != 9)
+        {
+            popReveal(pair_iter, badFlag);
+        }
+    }
+}
+// TODO animation
+void minesweeper::popReveal(coordPair aPair, int a, int b, int c, int d)
+{
+    return;
+}
+/*
 bool minesweeper::checkSolution(std::vector<std::vector<int>>)
 {
 

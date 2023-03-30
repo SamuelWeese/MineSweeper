@@ -32,4 +32,4 @@ target_link_libraries(
  sfml-graphics
 )
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sprite_sheet.png "/tmp/sprite_sheet.png" COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sprite_sheet2.png "/tmp/sprite_sheet2.png" COPYONLY)

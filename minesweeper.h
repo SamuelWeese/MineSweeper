@@ -36,6 +36,9 @@ public:
     void numberBoard();
 
 
+    void playEndAnimation();
+    void popReveal(coordPair aPair, int a, int b, int c, int d);
+
     void solve();
     void solveGraphically();
     bool checkSolution(std::vector<std::vector<u_short>>);
