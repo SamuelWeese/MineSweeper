@@ -4,12 +4,12 @@
 #include <cstring>
 #include <SFML/Graphics.hpp>
 
-#define pixelWidth 16
+#define pixelWidth 256
 #define cleanTile 1*pixelWidth,0*pixelWidth,2*pixelWidth,1*pixelWidth
 #define emptyTile 2*pixelWidth,0*pixelWidth,1*pixelWidth,1*pixelWidth
 //#define flagTile 1*pixelWidth, 1*pixelWidth, 2*pixelWidth,2*pixelWidth
 #define badFlag 1*pixelWidth, 2*pixelWidth, 2*pixelWidth,3*pixelWidth
-#define flagTile 1*pixelWidth, 2*pixelWidth, 2*pixelWidth,3*pixelWidth
+#define flagTile 1*pixelWidth, 2*pixelWidth, 1*pixelWidth,2*pixelWidth
 bool safetyCheck(long value, long min, long max)
 {
     if (value >= max) return false;
@@ -34,7 +34,7 @@ minesweeper::minesweeper(sf::RenderWindow *aWindow, u_int size, u_int bombs)
 
     this->window = aWindow;
 
-    if (!spriteSheet.loadFromFile("/tmp/sprite_sheet2.png"))
+    if (!spriteSheet.loadFromFile("/tmp/sprite_sheet3.png"))
     {
         throw std::runtime_error("Bad tile sprite texture path.");
     }
